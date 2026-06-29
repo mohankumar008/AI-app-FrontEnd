@@ -9,7 +9,7 @@ import Subplans from "./Subplans";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import NextLogin from './NextLogin'
 import Dashboard from './context/Dashboard'
-import Error from './error'
+import Error from './Error'
 import Fileupload from "./Fileupload"
 
 
