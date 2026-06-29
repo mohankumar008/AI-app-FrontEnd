@@ -50,7 +50,7 @@ const Registration = () => {
     navigate("/login");
 
   }; 
-  const url = `${import.meta.env.VITE_API_URL}/reg`;
+  const url = `https://ai-app-backend-production-b9e9.up.railway.app/reg`;
   const handlelogin = async () => {
     // setsaveddata([...savedData, formData]);
     saveUserDetails(formData);

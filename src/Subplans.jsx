@@ -10,7 +10,7 @@ import axios from "axios";
 const Subplans = () => {
   const { planDetails, userCompleteDetails } = useContext(UserDetailContext);
 
- const url = `${import.meta.env.VITE_API_URL}/planreg`;
+ const url = `https://ai-app-backend-production-b9e9.up.railway.app/planreg`;
   useEffect(() => {
     const sendData = async () => {
       const data = userCompleteDetails();

@@ -31,7 +31,7 @@ const NextLogin = () => {
     console.log(logindatas);
   };
 
-  const url = `${import.meta.env.VITE_API_URL}/savelogin`;
+  const url = `https://ai-app-backend-production-b9e9.up.railway.app/savelogin`;
 
   const handleAuthenticate = async () => {
     try {
