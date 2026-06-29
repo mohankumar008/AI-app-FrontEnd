@@ -31,7 +31,7 @@ const NextLogin = () => {
     console.log(logindatas);
   };
 
-  const url = "http://localhost:3000/savelogin";
+  const url = `${import.meta.env.VITE_API_URL}/savelogin`;
 
   const handleAuthenticate = async () => {
     try {

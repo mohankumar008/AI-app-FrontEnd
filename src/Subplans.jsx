@@ -10,7 +10,7 @@ import axios from "axios";
 const Subplans = () => {
   const { planDetails, userCompleteDetails } = useContext(UserDetailContext);
 
-  const url = "http://localhost:3000/planreg";
+ const url = `${import.meta.env.VITE_API_URL}/planreg`;
   useEffect(() => {
     const sendData = async () => {
       const data = userCompleteDetails();

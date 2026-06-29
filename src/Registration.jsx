@@ -50,7 +50,7 @@ const Registration = () => {
     navigate("/login");
 
   }; 
-  const url = "http://localhost:3000/reg";
+  const url = `${import.meta.env.VITE_API_URL}/reg`;
   const handlelogin = async () => {
     // setsaveddata([...savedData, formData]);
     saveUserDetails(formData);
