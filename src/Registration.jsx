@@ -1,41 +1,31 @@
-import React, { useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { useState,useContext } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
-import { UserDetailContext } from "./context/UserDetailContext";
-import { Routes,Route,Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Eye, EyeOff, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Subplans from "./Subplans";
-
+import { UserDetailContext } from "./context/UserDetailContext";
+import AuthShell from "./components/AuthShell";
+import GlassCard from "./components/GlassCard";
+import Input from "./components/Input";
+import Button from "./components/Button";
 
 const Registration = () => {
-
-
-
-  const { saveUserDetails} =
-    useContext(UserDetailContext);
+  const { saveUserDetails } = useContext(UserDetailContext);
   const [formData, setformData] = useState({
     Yourname: "",
     youremail: "",
     password: "",
   });
 
-
-  
-
-  const [savedData, setsaveddata] = useState([]);
   const [ischecked, setischecked] = useState(true);
   const [show, setshow] = useState("password");
-  const [hide, sethide] = useState("Showpassword");
 
-
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
   const handlechange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
     setformData({ ...formData, [name]: value });
-    
   };
 
   const handleterms = () => {
@@ -44,18 +34,16 @@ const Registration = () => {
 
   const handleshow = () => {
     setshow(show === "password" ? "text" : "password");
-    sethide(hide === "Showpassword" ? "Hidepassword" : "Showpassword");
   };
+
   const gologinpage = () => {
     navigate("/login");
+  };
 
-  }; 
   const url = `https://ai-app-backend-production-b9e9.up.railway.app/reg`;
+
   const handlelogin = async () => {
-    // setsaveddata([...savedData, formData]);
     saveUserDetails(formData);
-    
-   
 
     if (ischecked) {
       alert("please accept the terms and conditions to process");
@@ -73,7 +61,6 @@ const Registration = () => {
             alert("Email aleady exists,please login or use another email");
           } else {
             if (data.success) {
-             
               navigate("/plan");
             }
           }
@@ -85,109 +72,84 @@ const Registration = () => {
   };
 
   return (
-    <>
-      <div>
-        <div className="card " style={{ width: "30rem", height: "42rem" }}>
-          <div className="card-body">
-            <h5 className="text-primary ">Create your Account</h5>
-            <p className="text-center small">Enter your details</p>
-            <div>
-              {/* <div className="row g-3">
-                  <div className="col-12"> */}
-              <div>
-                <label
-                  htmlFor="name"
-                  className="form-label d-flex align-items-start"
-                >
-                  Your name
-                </label>
-
-                <input
-                  type="text"
-                  className="form-control"
-                  name="Yourname"
-                  onChange={handlechange}
-                />
-              </div>
-
-              {/* </div> */}
-
-              {/* <div className="col-12"> */}
-              <div className="mt-3">
-                <label
-                  htmlFor="email"
-                  className="form-label d-flex align-items-start"
-                >
-                  Your email
-                </label>
-
-                <input
-                  type="email"
-                  name="youremail"
-                  onChange={handlechange}
-                  className="form-control"
-                
-                />
-              </div>
-
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-              <div className="mt-3">
-                <label
-                  htmlFor="Password"
-                  className="d-flex align-items-start form-label"
-                >
-                  Password
-                </label>
-
-                <input
-                  type={show}
-                  onChange={handlechange}
-                  name="password"
-                  className="form-control"
-                />
-                <button
-                  className="btn btn-primary form-control mt-3"
-                  onClick={handleshow}
-                >
-                  {hide}
-                </button>
-              </div>
-              {/* </div> */}
-              {/* <div className="col-12 text-center"> */}
-              <input
-                type="checkbox"
-                className="mt-3 create"
-                onClick={handleterms}
-              />
-              <label className="mt-3" htmlFor="conditions">
-                I agree and accept the terms and conditions
-              </label>
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-              <button
-                onClick={handlelogin}
-                className="btn btn-outline-primary  mt-3 btn-lg btn-block form-control"
-                disabled={ischecked}
-              >
-                Create account
-              </button>
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-              <p className="mt-3">Already have an account?</p>
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-
-              <button onClick={gologinpage} className="btn btn-outline-primary btn-lg btn-block form-control">
-                login
-              </button>
-              {/* </div> */}
-              {/* </div> */}
-            </div>
-          </div>
+    <AuthShell>
+      <GlassCard>
+        <div className="mb-7 flex flex-col items-center text-center">
+          <motion.div
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+            className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet to-cyan/70 shadow-glow"
+          >
+            <FileText className="h-6 w-6 text-ink" />
+          </motion.div>
+          <h5 className="font-display text-2xl font-bold text-white">
+            Create your account
+          </h5>
+          <p className="mt-1 text-sm text-mist/70">
+            Start scanning, extracting, and understanding your documents
+          </p>
         </div>
-      </div>
-    </>
+
+        <Input
+          label="Your name"
+          name="Yourname"
+          onChange={handlechange}
+          placeholder="Jordan Lee"
+        />
+        <Input
+          label="Your email"
+          type="email"
+          name="youremail"
+          onChange={handlechange}
+          placeholder="you@example.com"
+        />
+        <Input
+          label="Password"
+          type={show}
+          name="password"
+          onChange={handlechange}
+          placeholder="••••••••"
+          rightSlot={
+            <button
+              type="button"
+              onClick={handleshow}
+              className="text-mist/60 transition-colors hover:text-violet-glow"
+              aria-label="Toggle password visibility"
+            >
+              {show === "password" ? (
+                <Eye className="h-5 w-5" />
+              ) : (
+                <EyeOff className="h-5 w-5" />
+              )}
+            </button>
+          }
+        />
+
+        <label className="mb-6 mt-1 flex cursor-pointer items-start gap-2 text-sm text-mist/80">
+          <input
+            type="checkbox"
+            onClick={handleterms}
+            className="mt-0.5 h-4 w-4 cursor-pointer accent-violet"
+          />
+          I agree and accept the terms and conditions
+        </label>
+
+        <Button onClick={handlelogin} disabled={ischecked}>
+          Create account
+        </Button>
+
+        <p className="mt-6 text-center text-sm text-mist/70">
+          Already have an account?{" "}
+          <button
+            onClick={gologinpage}
+            className="font-semibold text-violet-glow transition-colors hover:text-cyan"
+          >
+            Log in
+          </button>
+        </p>
+      </GlassCard>
+    </AuthShell>
   );
 };
 

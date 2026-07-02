@@ -1,11 +1,15 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { Eye, EyeOff, ScanLine } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import AuthShell from "./components/AuthShell";
+import GlassCard from "./components/GlassCard";
+import Input from "./components/Input";
+import Button from "./components/Button";
 
 const NextLogin = () => {
   const [show, setshow] = useState("password");
-  const [hide, sethide] = useState("Showpassword");
   const [logindatas, setlogindatas] = useState({
     youremail: "",
     password: "",
@@ -13,7 +17,6 @@ const NextLogin = () => {
 
   const handleshow = () => {
     setshow(show === "password" ? "text" : "password");
-    sethide(hide === "Showpassword" ? "Hidepassword" : "Showpassword");
   };
 
   const navigate = useNavigate();
@@ -24,19 +27,14 @@ const NextLogin = () => {
 
   const handlechangeinlogin = (e) => {
     const name = e.target.name;
-
     const value = e.target.value;
-    console.log(name, ":", value);
     setlogindatas({ ...logindatas, [name]: value });
-    console.log(logindatas);
   };
 
   const url = `https://ai-app-backend-production-b9e9.up.railway.app/savelogin`;
 
   const handleAuthenticate = async () => {
     try {
-
-      
       const response = await axios.post(url, {
         youremail: logindatas.youremail,
         password: logindatas.password,
@@ -50,13 +48,11 @@ const NextLogin = () => {
         } else {
           if (response.status === 203) {
             alert("Your plan expired,please create new account!");
-            navigate("/plan")
+            navigate("/plan");
           } else {
             const tokens = response.data.token;
-            console.log(tokens);
             localStorage.setItem("token", tokens);
             window.dispatchEvent(new Event("token-update"));
-
             navigate("/fileupload");
           }
         }
@@ -67,89 +63,69 @@ const NextLogin = () => {
   };
 
   return (
-    <>
-      <div>
-        <div className="card " style={{ width: "30rem" }}>
-          <div className="card-body">
-            <h5 className="text-primary ">Login to Your Account</h5>
-            <p className="text-center small">
-              Enter your email and password to login
-            </p>
-            <div>
-              {/* <div className="row g-3">
-                  <div className="col-12"> */}
-
-              <label
-                htmlFor="email"
-                className=" form-label d-flex align-items-start"
-              >
-                Email
-              </label>
-              <div className="input-group">
-                <div className="input-group-text">@</div>
-                <input
-                  type="email"
-                  onChange={handlechangeinlogin}
-                  className="form-control"
-                  name="youremail"
-                />
-              </div>
-
-              {/* </div> */}
-
-              {/* <div className="col-12"> */}
-
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-              <div className="mt-3">
-                <label
-                  htmlFor="password"
-                  className="d-flex align-items-start form-label"
-                >
-                  Password
-                </label>
-
-                <input
-                  type={show}
-                  onChange={handlechangeinlogin}
-                  name="password"
-                  className="form-control"
-                />
-                <button
-                  className="btn btn-primary form-control mt-3"
-                  onClick={handleshow}
-                >
-                  {hide}
-                </button>
-              </div>
-              {/* </div> */}
-              {/* <div className="col-12 text-center"> */}
-
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-              <button
-                onClick={handleAuthenticate}
-                className="btn btn-outline-primary btn-lg mt-3 btn-block form-control"
-              >
-                Login
-              </button>
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-              <p className="mt-3 d-flex align-items-start">
-                Don't have an account?
-              </p>
-              {/* </div> */}
-              {/* <div className="col-12"> */}
-              <p className="text-primary  create" onClick={handlecreate}>
-                <u>Create an account </u>
-              </p>
-              {/* </div> */}
-              {/* </div> */}
-            </div>
-          </div>
+    <AuthShell>
+      <GlassCard>
+        <div className="mb-7 flex flex-col items-center text-center">
+          <motion.div
+            initial={{ scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+            className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet to-cyan/70 shadow-glow"
+          >
+            <ScanLine className="h-6 w-6 text-ink" />
+          </motion.div>
+          <h5 className="font-display text-2xl font-bold text-white">
+            Welcome back
+          </h5>
+          <p className="mt-1 text-sm text-mist/70">
+            Log in to continue to your workspace
+          </p>
         </div>
-      </div>
-    </>
+
+        <Input
+          label="Email"
+          type="email"
+          name="youremail"
+          onChange={handlechangeinlogin}
+          placeholder="you@example.com"
+        />
+        <Input
+          label="Password"
+          type={show}
+          name="password"
+          onChange={handlechangeinlogin}
+          placeholder="••••••••"
+          rightSlot={
+            <button
+              type="button"
+              onClick={handleshow}
+              className="text-mist/60 transition-colors hover:text-violet-glow"
+              aria-label="Toggle password visibility"
+            >
+              {show === "password" ? (
+                <Eye className="h-5 w-5" />
+              ) : (
+                <EyeOff className="h-5 w-5" />
+              )}
+            </button>
+          }
+        />
+
+        <Button onClick={handleAuthenticate} className="mt-2">
+          Login
+        </Button>
+
+        <p className="mt-6 text-center text-sm text-mist/70">
+          Don't have an account?{" "}
+          <button
+            onClick={handlecreate}
+            className="font-semibold text-violet-glow transition-colors hover:text-cyan"
+          >
+            Create an account
+          </button>
+        </p>
+      </GlassCard>
+    </AuthShell>
   );
 };
 

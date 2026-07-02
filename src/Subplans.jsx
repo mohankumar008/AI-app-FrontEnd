@@ -1,21 +1,66 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Routes, Route, Link,useNavigate } from "react-router-dom";
-import NextLogin from "./NextLogin";
-import { useContext } from "react";
-import { UserDetailContext } from "./context/UserDetailContext";
-import { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { Check, Sparkles, Zap, Crown } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { UserDetailContext } from "./context/UserDetailContext";
+import AuthShell from "./components/AuthShell";
+import Button from "./components/Button";
+
+const plans = [
+  {
+    name: "Free Trial",
+    price: "Free",
+    period: "for 24 hours",
+    icon: Sparkles,
+    features: [
+      "Max file size: 5 MB",
+      "OCR support: Yes",
+      "Customer support: No",
+      "Total sessions: Unlimited",
+    ],
+    cta: "Create a free account",
+    highlight: false,
+  },
+  {
+    name: "Pro",
+    price: "₹999",
+    period: "/ week",
+    icon: Zap,
+    features: [
+      "Max file size: 5 MB",
+      "OCR support: Yes",
+      "Customer support: Yes",
+      "Total sessions: Unlimited",
+    ],
+    cta: "Select plan",
+    highlight: true,
+  },
+  {
+    name: "Advanced",
+    price: "₹3499",
+    period: "/ month",
+    icon: Crown,
+    features: [
+      "Max file size: 5 MB",
+      "OCR support: Yes",
+      "Customer support: Yes",
+      "Total sessions: Unlimited",
+    ],
+    cta: "Select plan",
+    highlight: false,
+  },
+];
 
 const Subplans = () => {
   const { planDetails, userCompleteDetails } = useContext(UserDetailContext);
 
- const url = `https://ai-app-backend-production-b9e9.up.railway.app/planreg`;
+  const url = `https://ai-app-backend-production-b9e9.up.railway.app/planreg`;
+
   useEffect(() => {
     const sendData = async () => {
       const data = userCompleteDetails();
-      console.log(data);
-      const respones = await axios.post(url, {
+      await axios.post(url, {
         Yourname: data.Yourname,
         youremail: data.youremail,
         password: data.password,
@@ -27,131 +72,92 @@ const Subplans = () => {
 
   const navigate = useNavigate();
 
-  const handleAccount = (e) => {
-    const value = e.target.name;
-    planDetails(value);
-
+  const handleAccount = (planName) => {
+    planDetails(planName);
     navigate("/login");
   };
 
-  
   return (
-    <>
-      <div>
-        <h4>
-          <u className="text-primary">Select your Plan</u>
-        </h4>
-        <p>
-          "From active listening to strategic implementation, we redefine
-          systems for enhanced efficiency, simplified processes, and informed
-          decision- making"
-        </p>
-        <div className="row d-flex justify-content-center align-items-center">
-          <div className="col-md-6 mt-3 col-lg-4 col-sm-12 d-flex justify-content-center align-items-center">
-            <div
-              className="card text-bg-primary mb-3"
-              style={{ maxWidth: "18rem" }}
-            >
-              <div className="card-header bg-white text-primary">
-                <h5>Free Trial</h5>
-              </div>
-              <div className="card-body">
-                <h6 className="card-title">Expires in 24 hours</h6>
-                <h6 className="d-flex align-items-start">
-                  Max file size : 5 MB
-                </h6>
-                <h6 className="d-flex align-items-start">OCR support : YES</h6>
-                <h6 className="d-flex align-items-start">
-                  Customer support : NO
-                </h6>
-                <h6 className="d-flex align-items-start">
-                  Total sessions : Unlimited
-                </h6>
-                <button
-                  className="btn mt-3 form-control btn-outline-light  text-dark"
-                  onClick={handleAccount}
-                  name={"Free Trial"}
-                >
-                  Create a free account
-                </button>
-
-                {/* <p>OCR support : YES</p> */}
-              </div>
-            </div>
-          </div>
-          <div className="col-md-6 mt-3 col-lg-4 col-sm-12 d-flex justify-content-center align-items-center">
-            <div
-              className="card text-bg-primary mb-3"
-              style={{ maxWidth: "18rem" }}
-            >
-              <div className="card-header bg-white text-primary">
-                <h5>Pro</h5>
-              </div>
-              <div className="card-body">
-                <h6 className="card-title">Rs 999/week</h6>
-                <h6 className="d-flex align-items-start">
-                  Max file size : 5 MB
-                </h6>
-                <h6 className="d-flex align-items-start">OCR support : YES</h6>
-                <h6 className="d-flex align-items-start ">
-                  Customer support : YES
-                </h6>
-                <h6 className="d-flex align-items-start">
-                  Total sessions : Unlimited
-                </h6>
-                <button
-                  className="btn mt-3 form-control btn-outline-light  text-dark"
-                  onClick={handleAccount}
-                  name={"Pro"}
-                >
-                  Select plan
-                </button>
-                {/* <button className="btn mt-3 form-control btn-outline-light  text-dark">
-                  Pay now
-                </button> */}
-
-                {/* <p>OCR support : YES</p> */}
-              </div>
-            </div>
-          </div>
-          <div className="col-md-6 col-lg-4 col-sm-12 mt-3 d-flex justify-content-center align-items-center">
-            <div
-              className="card text-bg-primary mb-3"
-              style={{ maxWidth: "18rem" }}
-            >
-              <div className="card-header bg-white text-primary">
-                <h5>Advanced</h5>
-              </div>
-              <div className="card-body">
-                <h6 className="card-title">Rs 3499/month</h6>
-                <h6 className="d-flex align-items-start">
-                  Max file size : 5 MB
-                </h6>
-                <h6 className="d-flex align-items-start">OCR support : YES</h6>
-                <h6 className="d-flex align-items-start">
-                  Customer support : YES
-                </h6>
-                <h6 className="d-flex align-items-start">
-                  Total sessions : Unlimited
-                </h6>
-                <button
-                  className="btn mt-3 form-control btn-outline-light  text-dark"
-                  onClick={handleAccount}
-                  name={"Advanced"}
-                >
-                  Select plan
-                </button>
-                {/* <button className="btn mt-3 form-control btn-outline-light  text-dark">
-                  Pay now
-                </button> */}
-
-                {/* <p>OCR support : YES</p> */}
-              </div>
-            </div>
-          </div>
-        </div>
+    <AuthShell wide>
+      <div className="mb-12 text-center">
+        <motion.h4
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="font-display text-3xl font-bold text-white sm:text-4xl"
+        >
+          Select your <span className="text-violet-glow">plan</span>
+        </motion.h4>
+        <motion.p
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mx-auto mt-3 max-w-xl text-sm text-mist/70 sm:text-base"
+        >
+          From active listening to strategic implementation, we redefine systems
+          for enhanced efficiency, simplified processes, and informed
+          decision-making.
+        </motion.p>
       </div>
-    </>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {plans.map((plan, i) => {
+          const Icon = plan.icon;
+          return (
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 * i, duration: 0.5, ease: "easeOut" }}
+              whileHover={{ y: -8 }}
+              className={`relative flex flex-col rounded-2xl border p-7 backdrop-blur-xl transition-shadow ${
+                plan.highlight
+                  ? "border-violet/60 bg-surface/80 shadow-glow"
+                  : "border-white/10 bg-surface/50 hover:border-white/20"
+              }`}
+            >
+              {plan.highlight && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-violet to-cyan/70 px-3 py-1 text-xs font-semibold text-ink">
+                  Most popular
+                </span>
+              )}
+
+              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-violet/15">
+                <Icon className="h-5 w-5 text-violet-glow" />
+              </div>
+
+              <h5 className="font-display text-lg font-semibold text-white">
+                {plan.name}
+              </h5>
+              <div className="mt-1 mb-5 flex items-baseline gap-1">
+                <span className="font-display text-2xl font-bold text-white">
+                  {plan.price}
+                </span>
+                <span className="text-sm text-mist/60">{plan.period}</span>
+              </div>
+
+              <ul className="mb-7 flex-1 space-y-2.5">
+                {plan.features.map((f) => (
+                  <li
+                    key={f}
+                    className="flex items-start gap-2 text-sm text-mist/80"
+                  >
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-cyan" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                onClick={() => handleAccount(plan.name)}
+                variant={plan.highlight ? "primary" : "outline"}
+              >
+                {plan.cta}
+              </Button>
+            </motion.div>
+          );
+        })}
+      </div>
+    </AuthShell>
   );
 };
 
