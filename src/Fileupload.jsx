@@ -16,7 +16,7 @@ import Button from "./components/Button";
 
 const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+  model: "gemini-1.5-flash-latest",
   systemInstruction:
     "You are a helpful, friendly AI assistant. Answer clearly and concisely. If the user writes in Tamil or Tanglish, respond in the same language.",
 });
