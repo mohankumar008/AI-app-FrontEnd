@@ -9,17 +9,9 @@ import {
   User,
   Trash2,
 } from "lucide-react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import AuthShell from "./components/AuthShell";
 import GlassCard from "./components/GlassCard";
 import Button from "./components/Button";
-
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
-  systemInstruction:
-    "You are a helpful, friendly AI assistant. Answer clearly and concisely. If the user writes in Tamil or Tanglish, respond in the same language.",
-});
 
 const Fileupload = () => {
   const [error, seterror] = useState();
@@ -35,7 +27,6 @@ const Fileupload = () => {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [chat, setChat] = useState(null);
   const bottomRef = useRef(null);
 
   const allowedtypes = [
@@ -75,9 +66,6 @@ const Fileupload = () => {
 
   const handleSubmit = () => {
     if (!file) return;
-    // start a fresh Gemini chat session
-    const chatSession = model.startChat({ history: [] });
-    setChat(chatSession);
     setSubmitted(true);
     setMessages((prev) => [
       ...prev,
@@ -90,16 +78,41 @@ const Fileupload = () => {
 
   const sendMessage = async () => {
     const text = input.trim();
-    if (!text || loading || !chat) return;
+    if (!text || loading) return;
 
-    const newUserMsg = { role: "user", content: text };
-    setMessages((prev) => [...prev, newUserMsg]);
+    const newMessages = [...messages, { role: "user", content: text }];
+    setMessages(newMessages);
     setInput("");
     setLoading(true);
 
     try {
-      const result = await chat.sendMessage(text);
-      const reply = result.response.text();
+      const response = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_GROQ_API_KEY}`,
+          },
+          body: JSON.stringify({
+            model: "llama3-8b-8192",
+            messages: [
+              {
+                role: "system",
+                content:
+                  "You are a helpful, friendly AI assistant. Answer clearly and concisely. If the user writes in Tamil or Tanglish, respond in the same language.",
+              },
+              ...newMessages.map((m) => ({ role: m.role, content: m.content })),
+            ],
+            max_tokens: 1024,
+          }),
+        },
+      );
+
+      const data = await response.json();
+      const reply =
+        data.choices?.[0]?.message?.content ||
+        "Maafi, puriyala. Konjam differently kelu.";
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (e) {
       console.error(e);
@@ -123,8 +136,6 @@ const Fileupload = () => {
   };
 
   const clearChat = () => {
-    const chatSession = model.startChat({ history: [] });
-    setChat(chatSession);
     setMessages([
       {
         role: "assistant",
@@ -229,7 +240,7 @@ const Fileupload = () => {
           </div>
           <div>
             <p className="font-display font-semibold text-slate-800">
-              Gemini AI Assistant
+              AI Assistant
             </p>
             {file && (
               <p className="text-xs text-slate-400 truncate max-w-[200px]">
@@ -333,7 +344,7 @@ const Fileupload = () => {
           </motion.button>
         </div>
         <p className="mt-2 text-center text-xs text-slate-400">
-          Powered by Google Gemini 1.5 Flash
+          Powered by Groq · Llama 3
         </p>
       </div>
     </div>
