@@ -99,8 +99,17 @@ const Fileupload = () => {
             messages: [
               {
                 role: "system",
-                content:
-                  "You are a helpful, friendly AI assistant. Answer clearly and concisely. If the user writes in Tamil or Tanglish, respond in the same language.",
+                content: `You are an expert AI assistant with deep knowledge across all domains including science, technology, business, medicine, law, finance, and general knowledge. 
+
+Your responses should be:
+- Accurate and well-researched
+- Detailed when the question requires depth
+- Clear and easy to understand
+- Structured with bullet points or numbered lists when explaining multiple concepts
+- Honest about uncertainty — say "I'm not sure" rather than guessing
+
+If the user writes in Tamil or Tanglish, respond in the same language with the same quality.
+If the user asks about their uploaded file "${file?.name}", acknowledge it and help them with document-related questions.`,
               },
               ...newMessages.map((m) => ({ role: m.role, content: m.content })),
             ],
