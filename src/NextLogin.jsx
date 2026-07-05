@@ -10,52 +10,30 @@ import Button from "./components/Button";
 
 const NextLogin = () => {
   const [show, setshow] = useState("password");
-  const [logindatas, setlogindatas] = useState({
-    youremail: "",
-    password: "",
-  });
-
-  const handleshow = () => {
-    setshow(show === "password" ? "text" : "password");
-  };
-
+  const [logindatas, setlogindatas] = useState({ youremail: "", password: "" });
   const navigate = useNavigate();
 
-  const handlecreate = () => {
-    navigate("/");
-  };
-
-  const handlechangeinlogin = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-    setlogindatas({ ...logindatas, [name]: value });
-  };
+  const handleshow = () => setshow(show === "password" ? "text" : "password");
+  const handlecreate = () => navigate("/");
+  const handlechangeinlogin = (e) =>
+    setlogindatas({ ...logindatas, [e.target.name]: e.target.value });
 
   const url = `https://ai-app-backend-production-b9e9.up.railway.app/savelogin`;
-
   const handleAuthenticate = async () => {
     try {
       const response = await axios.post(url, {
         youremail: logindatas.youremail,
         password: logindatas.password,
       });
-
-      if (response.status === 201) {
-        alert("user not found");
+      if (response.status === 201) alert("user not found");
+      else if (response.status === 202) alert("invalid password");
+      else if (response.status === 203) {
+        alert("Your plan expired, please create new account!");
+        navigate("/plan");
       } else {
-        if (response.status === 202) {
-          alert("invalid password");
-        } else {
-          if (response.status === 203) {
-            alert("Your plan expired,please create new account!");
-            navigate("/plan");
-          } else {
-            const tokens = response.data.token;
-            localStorage.setItem("token", tokens);
-            window.dispatchEvent(new Event("token-update"));
-            navigate("/fileupload");
-          }
-        }
+        localStorage.setItem("token", response.data.token);
+        window.dispatchEvent(new Event("token-update"));
+        navigate("/fileupload");
       }
     } catch (e) {
       console.log(e);
@@ -65,19 +43,26 @@ const NextLogin = () => {
   return (
     <AuthShell>
       <GlassCard>
-        <div className="mb-7 flex flex-col items-center text-center">
+        <div className="mb-8 flex flex-col items-center text-center">
           <motion.div
-            initial={{ scale: 0.6, opacity: 0 }}
+            initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-            className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet to-cyan/70 shadow-glow"
+            className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl animate-float"
+            style={{
+              background: "linear-gradient(135deg, #6C63FF 0%, #00D4AA 100%)",
+              boxShadow: "0 8px 32px rgba(108,99,255,0.45)",
+            }}
           >
-            <ScanLine className="h-6 w-6 text-ink" />
+            <ScanLine className="h-8 w-8 text-white" />
           </motion.div>
-          <h5 className="font-display text-2xl font-bold text-white">
+          <h5
+            className="font-display text-2xl font-bold"
+            style={{ color: "#2D2F4A" }}
+          >
             Welcome back
           </h5>
-          <p className="mt-1 text-sm text-mist/70">
+          <p className="mt-1.5 text-sm" style={{ color: "#7A7EA0" }}>
             Log in to continue to your workspace
           </p>
         </div>
@@ -99,8 +84,7 @@ const NextLogin = () => {
             <button
               type="button"
               onClick={handleshow}
-              className="text-mist/60 transition-colors hover:text-violet-glow"
-              aria-label="Toggle password visibility"
+              style={{ color: "#9A9DC0" }}
             >
               {show === "password" ? (
                 <Eye className="h-5 w-5" />
@@ -115,11 +99,12 @@ const NextLogin = () => {
           Login
         </Button>
 
-        <p className="mt-6 text-center text-sm text-mist/70">
+        <p className="mt-6 text-center text-sm" style={{ color: "#9A9DC0" }}>
           Don't have an account?{" "}
           <button
             onClick={handlecreate}
-            className="font-semibold text-violet-glow transition-colors hover:text-cyan"
+            className="font-semibold"
+            style={{ color: "#6C63FF" }}
           >
             Create an account
           </button>

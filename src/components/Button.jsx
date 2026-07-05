@@ -1,15 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const variants = {
-  primary:
-    "bg-gradient-to-r from-violet to-violet-dim text-white shadow-glow hover:shadow-[0_0_55px_rgba(124,92,255,0.55)]",
-  ghost:
-    "bg-white/5 text-mist border border-white/10 hover:bg-white/10 hover:text-white",
-  outline:
-    "bg-transparent border border-violet/60 text-violet-glow hover:bg-violet/10",
-};
-
 const Button = ({
   children,
   onClick,
@@ -18,14 +9,38 @@ const Button = ({
   variant = "primary",
   className = "",
 }) => {
+  const styles = {
+    primary: {
+      background: disabled
+        ? "#c8cad4"
+        : "linear-gradient(135deg, #6C63FF 0%, #00D4AA 100%)",
+      color: "#ffffff",
+      boxShadow: disabled
+        ? "none"
+        : "0 4px 20px rgba(108,99,255,0.45), 0 2px 8px rgba(0,212,170,0.2)",
+    },
+    ghost: {
+      background: "#EEF0F5",
+      color: "#6C63FF",
+      boxShadow: "5px 5px 10px #c8cad4, -5px -5px 10px #ffffff",
+    },
+    outline: {
+      background: "#EEF0F5",
+      color: "#6C63FF",
+      boxShadow: "5px 5px 10px #c8cad4, -5px -5px 10px #ffffff",
+      border: "1px solid rgba(108,99,255,0.3)",
+    },
+  };
+
   return (
     <motion.button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      whileHover={disabled ? {} : { scale: 1.02 }}
+      whileHover={disabled ? {} : { scale: 1.02, y: -1 }}
       whileTap={disabled ? {} : { scale: 0.97 }}
-      className={`w-full rounded-xl px-5 py-3 font-display font-semibold tracking-wide transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-40 ${variants[variant]} ${className}`}
+      className={`w-full rounded-2xl px-5 py-3.5 font-display font-semibold tracking-wide transition-all duration-200 disabled:cursor-not-allowed ${className}`}
+      style={styles[variant] || styles.primary}
     >
       {children}
     </motion.button>
