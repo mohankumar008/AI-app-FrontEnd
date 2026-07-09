@@ -50,6 +50,12 @@ const plans = [
   },
 ];
 
+const BG = "#EEF0F5";
+const NEU = "8px 8px 16px #c8cad4, -8px -8px 16px #ffffff";
+const NEU_SM = "4px 4px 8px #c8cad4, -4px -4px 8px #ffffff";
+const GRADIENT = "linear-gradient(135deg, #6C63FF 0%, #00D4AA 100%)";
+const GLOW = "0 4px 20px rgba(108,99,255,0.4)";
+
 const Subplans = () => {
   const { planDetails, userCompleteDetails } = useContext(UserDetailContext);
   const url = `https://ai-app-backend-production-b9e9.up.railway.app/planreg`;
@@ -68,13 +74,26 @@ const Subplans = () => {
   }, [userCompleteDetails]);
 
   const navigate = useNavigate();
-  const handleAccount = (planName) => {
-    planDetails(planName);
-    navigate("/login");
+
+  const handleAccount = (plan) => {
+    planDetails(plan.name);
+    if (plan.name === "Free Trial") {
+      // Free trial — skip payment, go login directly
+      navigate("/login");
+    } else {
+      // Paid plans — go to payment page
+      navigate("/payment", {
+        state: {
+          planName: plan.name,
+          price:
+            plan.price + (plan.period !== "for 24 hours" ? plan.period : ""),
+        },
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: "#EEF0F5" }}>
+    <div className="min-h-screen flex" style={{ backgroundColor: BG }}>
       {/* Sidebar */}
       <div
         className="hidden lg:flex flex-col w-64 shrink-0 px-7 py-10 justify-between"
@@ -87,10 +106,7 @@ const Subplans = () => {
           <div className="flex items-center gap-3 mb-10">
             <div
               className="h-10 w-10 rounded-xl flex items-center justify-center"
-              style={{
-                background: "linear-gradient(135deg, #6C63FF, #00D4AA)",
-                boxShadow: "0 0 20px rgba(108,99,255,0.5)",
-              }}
+              style={{ background: GRADIENT, boxShadow: GLOW }}
             >
               <FileStack className="h-5 w-5 text-white" />
             </div>
@@ -99,7 +115,7 @@ const Subplans = () => {
             </span>
           </div>
           <p
-            className="text-xs font-semibold mb-4 uppercase tracking-widest"
+            className="text-xs font-bold mb-4 uppercase tracking-widest"
             style={{ color: "rgba(255,255,255,0.35)" }}
           >
             Choose your plan
@@ -111,6 +127,21 @@ const Subplans = () => {
             From active listening to strategic implementation, we redefine
             systems for enhanced efficiency and informed decision-making.
           </p>
+
+          <div
+            className="mt-8 rounded-2xl p-4"
+            style={{
+              background: "rgba(0,212,170,0.1)",
+              border: "1px solid rgba(0,212,170,0.2)",
+            }}
+          >
+            <p className="text-xs font-bold mb-1" style={{ color: "#00D4AA" }}>
+              Free trial includes
+            </p>
+            <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+              Full access for 24 hours. No credit card needed.
+            </p>
+          </div>
         </div>
         <p className="text-xs" style={{ color: "rgba(255,255,255,0.25)" }}>
           © 2025 DocAI
@@ -151,23 +182,21 @@ const Subplans = () => {
                     ? {
                         background:
                           "linear-gradient(135deg, #6C63FF 0%, #4A42CC 60%, #00D4AA 100%)",
-                        boxShadow:
-                          "0 16px 48px rgba(108,99,255,0.45), 0 4px 16px rgba(0,212,170,0.2)",
+                        boxShadow: "0 16px 48px rgba(108,99,255,0.45)",
                       }
                     : {
-                        backgroundColor: "#EEF0F5",
-                        boxShadow:
-                          "8px 8px 20px #c8cad4, -8px -8px 20px #ffffff",
+                        backgroundColor: BG,
+                        boxShadow: NEU,
                       }
                 }
               >
                 {plan.highlight && (
                   <div
-                    className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold"
+                    className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-bold whitespace-nowrap"
                     style={{
-                      background: "#EEF0F5",
+                      background: BG,
                       color: "#6C63FF",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+                      boxShadow: NEU_SM,
                     }}
                   >
                     Most popular
@@ -179,11 +208,7 @@ const Subplans = () => {
                   style={
                     plan.highlight
                       ? { background: "rgba(255,255,255,0.2)" }
-                      : {
-                          background: "rgba(108,99,255,0.1)",
-                          boxShadow:
-                            "3px 3px 6px #c8cad4, -3px -3px 6px #ffffff",
-                        }
+                      : { backgroundColor: BG, boxShadow: NEU_SM }
                   }
                 >
                   <Icon
@@ -249,7 +274,7 @@ const Subplans = () => {
                 </ul>
 
                 <button
-                  onClick={() => handleAccount(plan.name)}
+                  onClick={() => handleAccount(plan)}
                   className="w-full rounded-2xl py-3.5 font-display font-bold text-sm transition-all duration-200 hover:scale-105 active:scale-95"
                   style={
                     plan.highlight
@@ -259,10 +284,9 @@ const Subplans = () => {
                           boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
                         }
                       : {
-                          background:
-                            "linear-gradient(135deg, #6C63FF, #00D4AA)",
+                          background: GRADIENT,
                           color: "#ffffff",
-                          boxShadow: "0 4px 16px rgba(108,99,255,0.4)",
+                          boxShadow: GLOW,
                         }
                   }
                 >

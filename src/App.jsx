@@ -5,6 +5,7 @@ import Subplans from "./Subplans";
 import NextLogin from "./NextLogin";
 import Error from "./Error";
 import Fileupload from "./Fileupload";
+import Payment from "./Payment";
 
 function App() {
   const [count, setCount] = useState();
@@ -16,7 +17,6 @@ function App() {
     };
     handlestyr();
     window.addEventListener("token-update", handlestyr);
-
     return () => {
       window.removeEventListener("token-update", handlestyr);
     };
@@ -27,6 +27,7 @@ function App() {
       <Route path="/" element={<Registration />} />
       <Route path="/plan" element={<Subplans />} />
       <Route path="/login" element={<NextLogin />} />
+      <Route path="/payment" element={<Payment />} />
       <Route
         path="/fileupload"
         element={count ? <Fileupload /> : <Navigate to="/error" />}
