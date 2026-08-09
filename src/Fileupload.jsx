@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
+const BACKEND = "https://ai-app-backend-ypkt.onrender.com";
 const allowedtypes = [
   "application/pdf",
   "image/png",
@@ -84,64 +84,22 @@ const Fileupload = () => {
     setLoading(true);
 
     try {
+      const chatHistory = messages
+        .filter((m) => typeof m.content === "string")
+        .map((m) => ({ role: m.role, content: m.content }));
+
+      const payload = {
+        messages: [...chatHistory, { role: "user", content: input }],
+      };
+
       if (fileBase64 && fileMime && fileMime.startsWith("image/")) {
-        const response = await axios.post(
-          "https://api.groq.com/openai/v1/chat/completions",
-          {
-            model: "meta-llama/llama-4-scout-17b-16e-instruct",
-            messages: [
-              {
-                role: "user",
-                content: [
-                  {
-                    type: "image_url",
-                    image_url: { url: `data:${fileMime};base64,${fileBase64}` },
-                  },
-                  { type: "text", text: input },
-                ],
-              },
-            ],
-            max_tokens: 1024,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${GROQ_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        const reply = response.data.choices[0].message.content;
-        setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
-      } else {
-        const systemMsg = fileBase64
-          ? `You are a helpful AI assistant. The user has uploaded a file. Help them analyze and answer questions about it. File content (base64 partial): ${fileBase64.slice(0, 300)}`
-          : "You are a helpful AI assistant. Answer clearly and helpfully.";
-
-        const chatHistory = messages
-          .filter((m) => typeof m.content === "string")
-          .map((m) => ({ role: m.role, content: m.content }));
-
-        const response = await axios.post(
-          "https://api.groq.com/openai/v1/chat/completions",
-          {
-            model: "llama-3.3-70b-versatile",
-            messages: [
-              { role: "system", content: systemMsg },
-              ...chatHistory,
-              { role: "user", content: input },
-            ],
-            max_tokens: 1024,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${GROQ_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        const reply = response.data.choices[0].message.content;
-        setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+        payload.imageBase64 = fileBase64;
+        payload.mimeType = fileMime;
       }
+
+      const response = await axios.post(`${BACKEND}/groq`, payload);
+      const reply = response.data.reply;
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (e) {
       console.error(e);
       setMessages((prev) => [
@@ -314,7 +272,6 @@ const Fileupload = () => {
             style={{
               display: "flex",
               justifyContent: msg.role === "user" ? "flex-end" : "flex-start",
-              animation: "fadeInUp 0.3s ease",
             }}
           >
             {msg.role === "assistant" && (
@@ -485,7 +442,6 @@ const Fileupload = () => {
           ➤
         </button>
       </div>
-
       <style>{`
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
