@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const allowedtypes = [
   "application/pdf",
   "image/png",
