@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 
 const Payment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const plan = location.state?.plan || "Pro";
+  const userData = location.state?.userData || {};
   const price = plan === "Pro" ? "999" : "3499";
   const period = plan === "Pro" ? "week" : "month";
 
@@ -54,10 +56,24 @@ const Payment = () => {
     cardData.expiry.length === 5 &&
     cardData.cvv.length === 3;
 
-  const handlePay = () => {
+  const url = `https://ai-app-backend-ypkt.onrender.com/planreg`;
+
+  const handlePay = async () => {
     if (!isValid) return;
     setLoading(true);
-    setTimeout(() => {
+    // Simulate payment processing
+    setTimeout(async () => {
+      try {
+        // Save user + plan to DB after payment success
+        await axios.post(url, {
+          Yourname: userData.Yourname,
+          youremail: userData.youremail,
+          password: userData.password,
+          plan: plan,
+        });
+      } catch (e) {
+        console.log(e);
+      }
       setLoading(false);
       setSuccess(true);
     }, 2200);

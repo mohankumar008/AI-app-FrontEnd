@@ -75,8 +75,18 @@ const Subplans = () => {
       }
       navigate("/login");
     } else {
-      // Paid plan — go to payment page
-      navigate("/payment", { state: { plan: plan.name } });
+      // Paid plan — pass user data to payment page
+      const data = userCompleteDetails ? userCompleteDetails() : {};
+      navigate("/payment", {
+        state: {
+          plan: plan.name,
+          userData: {
+            Yourname: data.Yourname,
+            youremail: data.youremail,
+            password: data.password,
+          },
+        },
+      });
     }
   };
 
